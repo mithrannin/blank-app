@@ -42,7 +42,9 @@ def make_teams(activePlayers):
             best_team_b = team_b_set  
     
     team1 = pd.DataFrame(list(best_team_a))
+    team1.columns = ["Player"]
     team2 = pd.DataFrame(list(best_team_b))
+    team2.columns = ["Player"]
     
     score1 = sum(players[x] for x in best_team_a)
     score2 = sum(players[x] for x in best_team_b)
@@ -56,11 +58,11 @@ def display_teams(team1, team2, score1, score2):
     with col1:
         st.subheader("Team 1")
         st.caption(f"Total rating: {score1:.2f}")
-        st.dataframe(team1)
+        st.dataframe(team1, hide_index=True)
     with col2:
         st.subheader("Team 2")
         st.caption(f"Total rating: {score2:.2f}")
-        st.dataframe(team2)
+        st.dataframe(team2, hide_index=True)
     st.divider()
 
 
