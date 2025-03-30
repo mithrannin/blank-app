@@ -55,11 +55,11 @@ def display_teams(team1, team2, score1, score2):
     
     with col1:
         st.subheader("Team 1")
-        st.caption(f"Total rating: {score1}")
+        st.caption(f"Total rating: {score1:.2f}")
         st.dataframe(team1)
     with col2:
         st.subheader("Team 2")
-        st.caption(f"Total rating: {score2}")
+        st.caption(f"Total rating: {score2:.2f}")
         st.dataframe(team2)
     st.divider()
 
