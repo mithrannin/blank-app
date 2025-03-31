@@ -108,6 +108,7 @@ def display_teams(team1, team2, score1, score2, team1b, team2b, score1b, score2b
 
 def home_page():
     st.title("Leaderboard")
+    st.subheader("Old ratings from indoor season, need to recalculate before Friday")
     
     # st.dataframe(df)
     
