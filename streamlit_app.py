@@ -24,6 +24,7 @@ def make_teams(activePlayers):
     players = activePlayers
     
     closest_difference = None
+    second_best = None
     all_players_set = set(players.keys())
     team_size = int(len(players)/2)
     
@@ -39,7 +40,22 @@ def make_teams(activePlayers):
         if not closest_difference or score_difference < closest_difference:
             closest_difference = score_difference
             best_team_a = team_a_set     
-            best_team_b = team_b_set  
+            best_team_b = team_b_set
+            
+    for team_a in combinations(players.keys(), team_size):
+        team_a_set = set(team_a)
+        team_b_set = all_players_set - team_a_set
+        
+        team_a_total = sum([players[x] for x in team_a_set])
+        team_b_total = sum([players[x] for x in team_b_set])
+    
+        score_difference = abs(team_a_total - team_b_total)
+        
+        if (not second_best or score_difference < second_best) and len(team_a_set.difference(best_team_a)) >= int(len(players)/4) and len(team_a_set.difference(best_team_b)) >= int(len(players)/4):
+            second_best = score_difference
+            second_team_a = team_a_set
+            second_team_b = team_b_set
+        
     
     team1 = pd.DataFrame(list(best_team_a))
     team1.columns = ["Player"]
@@ -49,10 +65,19 @@ def make_teams(activePlayers):
     score1 = sum(players[x] for x in best_team_a)
     score2 = sum(players[x] for x in best_team_b)
     
-    return team1, team2, score1, score2
+    team1b = pd.DataFrame(list(second_team_a))
+    team1b.columns = ["Player"]
+    team2b = pd.DataFrame(list(second_team_b))
+    team2b.columns = ["Player"]
     
-def display_teams(team1, team2, score1, score2):
+    score1b = sum(players[x] for x in second_team_a)
+    score2b = sum(players[x] for x in second_team_b)
+    
+    return team1, team2, score1, score2, team1b, team2b, score1b, score2b
+    
+def display_teams(team1, team2, score1, score2, team1b, team2b, score1b, score2b):
     st.header("Suggested teams")
+    st.subheader("Best variant")
     col1, col2 = st.columns(2)
     
     with col1:
@@ -64,8 +89,18 @@ def display_teams(team1, team2, score1, score2):
         st.caption(f"Total rating: {score2:.2f}")
         st.dataframe(team2, hide_index=True)
     st.divider()
-
-
+    st.subheader("Runner up variant")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Team 1")
+        st.caption(f"Total rating: {score1b:.2f}")
+        st.dataframe(team1b, hide_index=True)
+    with col2:
+        st.subheader("Team 2")
+        st.caption(f"Total rating: {score2b:.2f}")
+        st.dataframe(team2b, hide_index=True)
+    st.divider()
 
 
     
@@ -122,22 +157,21 @@ def matchmaking():
             label = matchmaking_label,
             type = "primary",
             use_container_width=False):
-       team1, team2, score1, score2 = make_teams(playersToMatch)
-       display_teams(team1, team2, score1, score2) 
+       team1, team2, score1, score2, team1b, team2b, score1b, score2b = make_teams(playersToMatch)
+       display_teams(team1, team2, score1, score2, team1b, team2b, score1b, score2b) 
         
         
         
     
     
-leaderboard = st.Page(home_page, title = "Leaderboard", icon = ":material/leaderboard:")
-matchHistory = st.Page(match_page, title = "Match History", icon = ":material/history:")
-matchmaker = st.Page(matchmaking, title = "Matchmaking tool", icon = ":material/group:")
+leaderboard = st.Page(home_page, title = "Leaderboard", icon = "🏆")
+matchHistory = st.Page(match_page, title = "Match History", icon = "📆")
+matchmaker = st.Page(matchmaking, title = "Matchmaking tool", icon = "🔥")
 
 
 # Navbar
-pg = st.navigation({"Ranking": [leaderboard],
-                    "Tools": [matchmaker],
-                    "Stats": [matchHistory]})
+pg = st.navigation({"Stats": [leaderboard, matchHistory],
+                    "Tools": [matchmaker]})
 
 pg.run()
 
