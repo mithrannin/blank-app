@@ -12,11 +12,14 @@ from itertools import combinations
 url = "https://docs.google.com/spreadsheets/d/1Qk1A-UVgPKnoGDnP4ZNtri0ucLn-cf2hmiIv41LdLPE/edit?usp=sharing"
 
 conn = st.connection("gsheets", type = GSheetsConnection)
-dfLeaderboard = conn.read(spreadsheet = url, worksheet = "1405471253")
-dfLeaderboard.index += 1
-dfLeaderboard.index.name = "Rank"
+df = conn.read(spreadsheet = url, worksheet = "1405471253")
+df.index += 1
+df.index.name = "Rank"
 
-dfPlayers = dfLeaderboard[['Player','Rating']].copy()
+dfLeaderboard = df.copy()
+dfLeaderboard.drop(dfLeaderboard.tail(1).index,inplace=True)
+
+dfPlayers = df[['Player','Rating']].copy()
 
 ## 
 
@@ -108,14 +111,15 @@ def display_teams(team1, team2, score1, score2, team1b, team2b, score1b, score2b
 
 def home_page():
     st.title("Leaderboard")
-    st.subheader("Old ratings from indoor season, need to recalculate before Friday")
+    st.subheader("Matches played: 0")
     
     # st.dataframe(df)
     
-    st.dataframe(dfLeaderboard)
+    st.dataframe(dfLeaderboard, height = 35 * len(dfLeaderboard) + 38)
     
 def match_page():
     st.title("Match History")
+    st.subheader("Matches played: 0")
     
 def matchmaking():
     st.title("Matchmaking tool")
@@ -176,4 +180,4 @@ pg = st.navigation({"Stats": [leaderboard, matchHistory],
 
 pg.run()
 
-# st.sidebar.markdown("# This is an empty space across all pages")
+st.sidebar.markdown("# Next game: April 4th")
