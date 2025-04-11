@@ -19,13 +19,15 @@ df.index.name = "Rank"
 dfLeaderboard = df.copy()
 dfLeaderboard['Change'] = dfLeaderboard['Change'].fillna(0)
 dfLeaderboard.drop(dfLeaderboard.tail(1).index,inplace=True)
-dfLeaderboard = dfLeaderboard.astype({'Change' : 'int'})
+dfLeaderboard = dfLeaderboard.astype({'Change' : 'int', 'Games' : 'int', 'Wins' : 'int', 'Losses' : 'int'})
 
 dfPlayers = df[['Player','Rating']].copy()
 
 dfMatches = conn.read(spreadsheet = url, worksheet = "1358750119")
 dfMatches = dfMatches.astype(str)
 
+dfMatch1 = dfMatches.head(2)
+dfMatch2 = dfMatches.tail(2)
 
 ## 
 
@@ -126,7 +128,7 @@ def color_format(value):
 
 def home_page():
     st.title("Leaderboard")
-    st.subheader("Matches played: 1")
+    st.subheader("Matches played: 2")
     
     # st.dataframe(df)
     
@@ -134,9 +136,10 @@ def home_page():
     
 def match_page():
     st.title("Match History")
-    st.subheader("Matches played: 1")
+    st.subheader("Matches played: 2")
     
-    st.dataframe(dfMatches.style.highlight_max(subset = ['Score'], color = 'palegreen'), hide_index=True)
+    st.dataframe(dfMatch1.style.highlight_max(subset = ['Score'], color = 'palegreen'), hide_index=True)
+    st.dataframe(dfMatch2.style.highlight_max(subset = ['Score'], color = 'palegreen'), hide_index=True)
     
 def matchmaking():
     st.title("Matchmaking tool")
@@ -197,5 +200,5 @@ pg = st.navigation({"Stats": [leaderboard, matchHistory],
 
 pg.run()
 
-st.sidebar.markdown("# Games played: 1")
-st.sidebar.markdown("# Next game: April 11th")
+st.sidebar.markdown("# Games played: 2")
+st.sidebar.markdown("# Next game: April 18th")
